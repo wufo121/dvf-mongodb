@@ -23,7 +23,6 @@ from datetime import datetime
 
 from src.config import get_db, COLL_MUTATIONS, COLL_COMMUNES
 
-# Les 5 paires de colonnes lotN_numero / lotN_surface_carrez du format officiel
 LOT_COLS = [(f"lot{i}_numero", f"lot{i}_surface_carrez") for i in range(1, 6)]
 
 
@@ -65,8 +64,6 @@ def build_mutation(mut_id, lignes):
         except ValueError:
             date_mut = None
 
-    # Lots embarques : chaque ligne source devient un lot.
-    # On y met le bati, le local, et les eventuels lots carrez de la ligne.
     lots = []
     for l in lignes:
         surfaces_carrez = []
@@ -89,7 +86,7 @@ def build_mutation(mut_id, lignes):
         "nature_mutation": p.get("nature_mutation") or None,
         "valeur_fonciere": to_float(p.get("valeur_fonciere")),
         "code_commune": p.get("code_commune") or None,
-        "nom_commune": p.get("nom_commune") or None,        # denormalisation assumee
+        "nom_commune": p.get("nom_commune") or None,
         "code_postal": p.get("code_postal") or None,
         "code_departement": p.get("code_departement") or None,
         "adresse": " ".join(x for x in [

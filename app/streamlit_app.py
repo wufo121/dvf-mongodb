@@ -12,7 +12,6 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-# rend le package src importable quand on lance via streamlit
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src.config import get_db, COLL_MUTATIONS  # noqa: E402
 from src.aggregations import part_volume_multilots  # noqa: E402
@@ -40,14 +39,12 @@ docs = list(db()[COLL_MUTATIONS].find(filtre).limit(2000))
 st.write(f"**{len(docs)} ventes** affichées (limité à 2000 pour la carte)")
 
 if docs:
-    # carte
     points = [{
         "lat": d["localisation"]["coordinates"][1],
         "lon": d["localisation"]["coordinates"][0],
     } for d in docs if d.get("localisation")]
     st.map(pd.DataFrame(points))
 
-    # tableau
     tableau = pd.DataFrame([{
         "commune": d.get("nom_commune"),
         "valeur (€)": d.get("valeur_fonciere"),

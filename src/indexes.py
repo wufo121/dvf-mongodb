@@ -19,7 +19,6 @@ def mesurer(coll, filtre, tri=None):
     plan = curseur.explain()
     exec_stats = plan["executionStats"]
     stage = plan["queryPlanner"]["winningPlan"]
-    # descend jusqu'au stage feuille pour lire COLLSCAN vs IXSCAN
     while "inputStage" in stage:
         stage = stage["inputStage"]
     return (
@@ -31,7 +30,6 @@ def mesurer(coll, filtre, tri=None):
 
 def demo_index(coll, nom, keys, filtre, tri=None, **kwargs):
     """Cree un index apres l'avoir mesure sans, puis remesure avec."""
-    # on s'assure que l'index n'existe pas encore
     try:
         coll.drop_index(nom)
     except Exception:
@@ -50,14 +48,12 @@ def demo_index(coll, nom, keys, filtre, tri=None, **kwargs):
 def creer_tous(db):
     coll = db[COLL_MUTATIONS]
 
-    # 1. Requetes par departement + periode (sert le filtre temporel/territorial)
     demo_index(
         coll, "idx_dept_date",
         [("code_departement", ASCENDING), ("date_mutation", DESCENDING)],
         filtre={"code_departement": "92"},
     )
 
-    # 2. Tri des lots par surface (index multicle sur tableau embarque)
     demo_index(
         coll, "idx_type_surface",
         [("lots.type_local", ASCENDING), ("lots.surface_bati", DESCENDING)],
@@ -65,12 +61,11 @@ def creer_tous(db):
         tri=[("lots.surface_bati", DESCENDING)],
     )
 
-    # 3. Index geospatial 2dsphere (requetes par rayon)
     demo_index(
         coll, "idx_geo",
         [("localisation", GEOSPHERE)],
         filtre={"localisation": {"$geoWithin": {
-            "$centerSphere": [[2.3, 48.86], 2 / 6378.1]}}},  # ~2 km autour de Paris
+            "$centerSphere": [[2.3, 48.86], 2 / 6378.1]}}},
     )
 
 

@@ -20,7 +20,6 @@ def prix_median_par_commune_trimestre(db, limite=15):
             "date_mutation": {"$ne": None},
             "lots.type_local": "Appartement",
         }},
-        # surface totale bati de la mutation (somme des lots batis)
         {"$addFields": {
             "surface_totale": {"$sum": "$lots.surface_bati"},
         }},
@@ -32,11 +31,11 @@ def prix_median_par_commune_trimestre(db, limite=15):
         }},
         {"$group": {
             "_id": {"commune": "$nom_commune", "annee": "$annee", "trimestre": "$trimestre"},
-            "prix_m2_median": {"$median": {  # MongoDB 7.0+
+            "prix_m2_median": {"$median": {
                 "input": "$prix_m2", "method": "approximate"}},
             "nb_ventes": {"$sum": 1},
         }},
-        {"$match": {"nb_ventes": {"$gte": 5}}},  # on ignore les groupes trop petits
+        {"$match": {"nb_ventes": {"$gte": 5}}},
         {"$sort": {"_id.commune": 1, "_id.annee": 1, "_id.trimestre": 1}},
         {"$limit": limite},
     ]
@@ -53,7 +52,6 @@ def ecart_maison_appart_par_densite(db):
         {"$match": {"lots.type_local": {"$in": ["Maison", "Appartement"]},
                     "lots.surface_bati": {"$gt": 0}}},
         {"$addFields": {"prix_m2": {"$divide": ["$valeur_fonciere", "$lots.surface_bati"]}}},
-        # jointure vers le referentiel communes
         {"$lookup": {
             "from": COLL_COMMUNES, "localField": "code_commune",
             "foreignField": "_id", "as": "commune_ref"}},

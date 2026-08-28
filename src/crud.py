@@ -61,17 +61,13 @@ if __name__ == "__main__":
     db = get_db()
     demo_id = "_DEMO_CRUD_"
 
-    # CREATE
     doc = {"_id": demo_id, "nom_commune": "TestVille", "valeur_fonciere": 100000,
            "code_departement": "92", "nb_lots": 1, "lots": []}
     print("CREATE ->", creer_mutation(db, doc))
 
-    # READ
     print("READ   ->", lire_mutations(db, {"_id": demo_id}))
 
-    # UPDATE
     print("UPDATE ->", maj_valeur(db, demo_id, 250000), "document(s) modifie(s)")
     print("READ   ->", lire_mutations(db, {"_id": demo_id}))
 
-    # DELETE
     print("DELETE ->", supprimer_mutation(db, demo_id), "document(s) supprime(s)")

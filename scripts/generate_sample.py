@@ -16,7 +16,6 @@ import csv
 import random
 from datetime import date, timedelta
 
-# Colonnes reelles d'un fichier geo-dvf (sous-ensemble suffisant pour le projet)
 COLUMNS = [
     "id_mutation", "date_mutation", "nature_mutation", "valeur_fonciere",
     "code_postal", "code_commune", "nom_commune", "code_departement",
@@ -26,7 +25,6 @@ COLUMNS = [
 ]
 
 COMMUNES = [
-    # (code_commune, nom, code_postal, dept, lon, lat)
     ("92050", "Nanterre", "92000", "92", 2.206, 48.892),
     ("92026", "Courbevoie", "92400", "92", 2.256, 48.897),
     ("92044", "Levallois-Perret", "92300", "92", 2.287, 48.895),
@@ -62,29 +60,25 @@ def main():
         d = rand_date(rng)
         nature = "Vente"
 
-        # 92% des ventes ont 1 a 4 lots, une minorite en a beaucoup (copropriete)
         if rng.random() < 0.92:
             nb_lots = rng.randint(1, 4)
         else:
-            nb_lots = rng.randint(6, 250)  # les grosses ventes qui testent l'embarquement
+            nb_lots = rng.randint(6, 250)
 
-        # valeur fonciere : parfois vide (donnee sale)
         if rng.random() < 0.05:
             valeur = ""
         else:
             valeur = str(rng.randint(80_000, 1_200_000))
 
-        # coordonnees : parfois absentes (donnee sale)
         if rng.random() < 0.08:
             lon_v, lat_v = "", ""
         else:
             lon_v = f"{lon + rng.uniform(-0.02, 0.02):.6f}"
             lat_v = f"{lat + rng.uniform(-0.02, 0.02):.6f}"
 
-        # une ligne CSV par lot (c'est ainsi que le vrai DVF est structure)
         for lot_idx in range(1, nb_lots + 1):
             type_local = rng.choice(TYPES)
-            surface = rng.randint(15, 180) if rng.random() > 0.03 else 0  # parfois 0
+            surface = rng.randint(15, 180) if rng.random() > 0.03 else 0
             rows.append({
                 "id_mutation": mut_id,
                 "date_mutation": d,

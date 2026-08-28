@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, ConfigurationError
 
-load_dotenv()  # charge les variables du .env dans os.environ
+load_dotenv()
 
 MONGODB_URI = os.getenv("MONGODB_URI")
 DB_NAME = os.getenv("DB_NAME", "dvf")
@@ -26,7 +26,7 @@ def get_client() -> MongoClient:
         )
     client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=8000)
     try:
-        client.admin.command("ping")  # echoue vite si la connexion ne passe pas
+        client.admin.command("ping")
     except ConnectionFailure as e:
         raise ConnectionFailure(
             f"Impossible de joindre Atlas. Verifiez l'URI et l'acces reseau (IP autorisee). Detail : {e}"
@@ -40,7 +40,6 @@ def get_db():
 
 
 if __name__ == "__main__":
-    # Test rapide : `python -m src.config` doit afficher OK si le .env est bon.
     db = get_db()
     print(f"Connexion OK -> base '{db.name}'")
     print("Collections presentes :", db.list_collection_names())
