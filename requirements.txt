@@ -1,0 +1,5 @@
+pymongo==4.8.0
+python-dotenv==1.0.1
+pandas==2.2.2
+matplotlib==3.9.0
+streamlit==1.37.0
